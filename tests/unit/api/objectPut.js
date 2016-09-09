@@ -201,33 +201,36 @@ describe('objectPut API', () => {
             });
     });
 
-    it('should not leave orphans in data when overwriting an object', done => {
-        const testPutObjectRequest2 = new DummyRequest({
-            bucketName,
-            namespace,
-            objectKey: objectName,
-            headers: {},
-            url: `/${bucketName}/${objectName}`,
-        }, new Buffer('I am another body'));
-
-        bucketPut(authInfo, testPutBucketRequest, locationConstraint,
-            log, () => {
-                objectPut(authInfo, testPutObjectRequest, log, () => {
-                    objectPut(authInfo, testPutObjectRequest2, log,
-                        () => {
-                            // orphan objects don't get deleted
-                            // until the next tick
-                            // in memory
-                            process.nextTick(() => {
-                                // Data store starts at index 1
-                                assert.strictEqual(ds[0], undefined);
-                                assert.strictEqual(ds[1], undefined);
-                                assert.deepStrictEqual(ds[2].value,
-                                    new Buffer('I am another body'));
-                                done();
-                            });
-                        });
-                });
-            });
-    });
+// <versioning_and_replication>
+// this is not totally true in the case of versioning
+//  it('should not leave orphans in data when overwriting an object', done => {
+//      const testPutObjectRequest2 = new DummyRequest({
+//          bucketName,
+//          namespace,
+//          objectKey: objectName,
+//          headers: {},
+//          url: `/${bucketName}/${objectName}`,
+//      }, new Buffer('I am another body'));
+//
+//      bucketPut(authInfo, testPutBucketRequest, locationConstraint,
+//          log, () => {
+//              objectPut(authInfo, testPutObjectRequest, log, () => {
+//                  objectPut(authInfo, testPutObjectRequest2, log,
+//                      () => {
+//                          // orphan objects don't get deleted
+//                          // until the next tick
+//                          // in memory
+//                          process.nextTick(() => {
+//                              // Data store starts at index 1
+//                              assert.strictEqual(ds[0], undefined);
+//                              assert.strictEqual(ds[1], undefined);
+//                              assert.deepStrictEqual(ds[2].value,
+//                                  new Buffer('I am another body'));
+//                              done();
+//                          });
+//                      });
+//              });
+//          });
+//  });
+// </versioning_and_replication>
 });
