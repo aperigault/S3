@@ -65,19 +65,35 @@ if (os.type() === 'Linux' && os.endianness() === 'LE' && ioctl) {
     logger.warn(warning);
 }
 
-// Create 3511 subdirectories for the data file backend
-const subDirs = Array.from({ length: constants.folderHash },
-    (v, k) => (k).toString());
-async.eachSeries(subDirs, (subDirName, next) => {
-    fs.mkdir(`${dataPath}/${subDirName}`, err => {
-        // If already exists, move on
-        if (err && err.errno !== -17) {
-            return next(err);
-        }
-        return next();
+function createMultDirs(topology, dataPath, index, callback) {
+    // Create dirsNb subdirectories for the data file backend
+    const subDirs = Array.from({ length: topology[index].number },
+        (v, k) => (k).toString());
+    async.eachSeries(subDirs, (subDirName, next) => {
+        fs.mkdir(`${dataPath}/${subDirName}`, err => {
+            // If already exists, move on
+            if (err && err.errno !== -17) {
+                return next(err);
+            }
+            if (index === topology.length - 1) {
+                return next();
+            }
+            return createMultDirs(topology, `${dataPath}/${subDirName}`,
+                index + 1, next);
+        });
+    }, err => callback(err));
+}
+
+if (!constants.topology) {
+    const topology = [{ number: constants.folderHash }];
+    // Create 3511 subdirectories for the data file backend
+    createMultDirs(topology, dataPath, 0, err => {
+        assert.strictEqual(err, null, `Error creating data files ${err}`);
+        logger.info('Init complete.  Go forth and store data.');
     });
-},
- err => {
-     assert.strictEqual(err, null, `Error creating data files ${err}`);
-     logger.info('Init complete.  Go forth and store data.');
- });
+} else {
+    createMultDirs(constants.topology, dataPath, 0, err => {
+        assert.strictEqual(err, null, `Error creating data files ${err}`);
+        logger.info('Init complete.  Go forth and store data.');
+    });
+}
