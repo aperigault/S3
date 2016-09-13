@@ -56,8 +56,11 @@ export default {
     // http://docs.aws.amazon.com/AmazonS3/latest/API/
     //      RESTBucketGET.html#RESTBucketGET-requests
     listingHardLimit: 1000,
-    // Storage system topology
-    topology: [{
+    // Metadata for storage system topology
+    // A real topology is generated automatically in init.js and saved in
+    // `./${topoFile}.json`
+    topoFile: 'topology',
+    topoMD: [{
         field: 'Rack',
         number: 20,
         // true -> a component can contain multiple fragments of an object,
