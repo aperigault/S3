@@ -61,26 +61,26 @@ export default {
     // `./${topoFile}.json`
     topoFile: 'topology',
     topoMD: [{
-        field: 'Rack',
-        number: 20,
+        domain: 'Rack',
+        number: 5,
         // true -> a component can contain multiple fragments of an object,
         // false otherwise.
-        replacement: false,
-        // #bits encoding the field
-        size: 6,
+        replacement: true,
+        // bit range from DISPERSION part representing this domain
+        binImgRange: [0, 6],
     }, {
-        field: 'Server',
-        number: 30,
+        domain: 'Server',
+        number: 2,
         replacement: false,
-        size: 8,
+        binImgRange: [6, 14],
     }, {
-        field: 'Drive',
-        number: 50,
+        domain: 'Drive',
+        number: 2,
         // drive capacity
         // number of `[min, max]` -> uniformly random between min and max
         weight: [0.2, 1.5],
         replacement: false,
-        size: 10,
+        binImgRange: [14, 24],
     }],
 
     // AWS sets a minimum size limit for parts except for the last part.
