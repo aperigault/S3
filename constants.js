@@ -62,20 +62,20 @@ export default {
     topoFile: 'topology',
     topoMD: [{
         domain: 'Rack',
-        number: 5,
+        number: 20,
         // true -> a component can contain multiple fragments of an object,
         // false otherwise.
-        replacement: true,
+        replacement: false,
         // bit range from DISPERSION part representing this domain
         binImgRange: [0, 6],
     }, {
         domain: 'Server',
-        number: 2,
+        number: 30,
         replacement: false,
         binImgRange: [6, 14],
     }, {
         domain: 'Drive',
-        number: 2,
+        number: 50,
         // drive capacity
         // number of `[min, max]` -> uniformly random between min and max
         weight: [0.2, 1.5],
