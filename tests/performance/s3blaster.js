@@ -1420,7 +1420,7 @@ class S3Blaster {
         this.count++;
         const data = {
             key: `key_S${this.size}_T${this.nThreads}_C${this.count}`,
-            data: new Buffer(this.value),
+            data: Buffer.from(this.value),
             sizeIdx: this.currSizeIdx,
         };
         const bucketName =
@@ -1561,7 +1561,7 @@ class S3Blaster {
         this.count++;
         const data = {
             key: `key_S${this.size}_T${this.nThreads}_C${this.count}`,
-            data: new Buffer(this.value),
+            data: Buffer.from(this.value),
             sizeIdx: this.currSizeIdx,
         };
         const bucketName =
