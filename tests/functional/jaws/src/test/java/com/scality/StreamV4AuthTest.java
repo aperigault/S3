@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.io.RandomAccessFile;
 
+import com.amazonaws.SDKGlobalConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.BeforeClass;
@@ -48,6 +49,8 @@ public class StreamV4AuthTest {
 
     @BeforeClass
     public static void initialize() throws Exception {
+        System.setProperty(SDKGlobalConfiguration.DISABLE_CERT_CHECKING_SYSTEM_PROPERTY, "true");
+
         JSONParser parser = new JSONParser();
         String path = Paths.get("../config.json").toAbsolutePath().toString();
         System.out.println(path);

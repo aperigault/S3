@@ -1,25 +1,20 @@
 package com.scality;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.Before ;
-import org.junit.BeforeClass ;
-import java.io.File;
-import java.io.FileReader;
-import java.nio.file.Paths;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.JSONObject;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.SDKGlobalConfiguration;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.identitymanagement.model.UploadServerCertificateRequest;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.S3ClientOptions;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.Bucket;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.FileReader;
+import java.nio.file.Paths;
 
 
 public class JavaTest {
@@ -31,12 +26,16 @@ public class JavaTest {
     public static String getTransport() { return transport; }
     protected static String ipAddress;
     public static String getIpAddress() { return ipAddress; }
+    protected static String caCertPath;
+    public static String getCaCertPath() { return caCertPath; }
     protected static AmazonS3 s3client;
     public AmazonS3 getS3Client() { return this.s3client; }
     public static final String bucketName = "somebucket";
 
     //run once before all the tests
     @BeforeClass public static void initConfig() throws Exception {
+        System.setProperty(SDKGlobalConfiguration.DISABLE_CERT_CHECKING_SYSTEM_PROPERTY, "true");
+
         JSONParser parser = new JSONParser();
         String path = Paths.get("../config.json").toAbsolutePath().toString();
         System.out.println(path);
@@ -45,6 +44,7 @@ public class JavaTest {
         JavaTest.secretKey = (String) obj.get("secretKey");
         JavaTest.transport = (String) obj.get("transport");
         JavaTest.ipAddress = (String) obj.get("ipAddress");
+        JavaTest.caCertPath = (String) obj.get("caCertPath");
 
         BasicAWSCredentials awsCreds =
             new BasicAWSCredentials(getAccessKey(), getSecretKey());
@@ -53,6 +53,11 @@ public class JavaTest {
             ":8000");
         s3client.setS3ClientOptions(new S3ClientOptions()
             .withPathStyleAccess(true));
+//        if(JavaTest.caCertPath != null){
+//            UploadServerCertificateRequest certificateRequest =
+//                    new UploadServerCertificateRequest();
+//            certificateRequest.setPath(getCaCertPath());
+//        }
     }
 
     @Test public void testCreateBucket() throws Exception {
